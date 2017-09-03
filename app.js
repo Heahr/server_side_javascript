@@ -6,6 +6,103 @@ var app = express();
 //저 두줄은 이유가 있는것이 아니라 express를 만든사람이 이렇게 하라고 약속을 정해둔것이다.
 //그래서 그냥 저형식대로 쓰자.
 
+app.locals.pretty = true;
+//9.
+//temp.jade파일이 보기 좋아진다.
+//검색 종류는 jade express code pretty
+
+app.set('view engine', 'jade');
+//6.
+//express 엔진에게 적용시킨다 탬블릿을.
+//jade라는 탬블릿 엔진을
+//정해져있다.
+
+app.set('views','./views');
+//7.
+//템블릿이 있는 디렉토리를 가르켜 주는 것.
+
+app.get('/template', function(req,res){
+  res.render('temp', {time:Date(), _title:'jade'});
+})
+//8.
+//render는 send와 비슷한 표현.
+//render는 사전적뜻으로 만들다 라는 뜻이 있다.
+//render에 의해서 두번째 인자로 객체('',{}<-이부분)를 전달하는데 그 객체의 이름은 time이다.
+//_title 이라는것도 _title이라는 변수에 접근한다는 것이다. 그래서 title안의 _title에 jade가 표현되는것을 볼수있다.
+
+app.use(express.static('public'));
+//4.
+//정적인 파일이 위치할 디랙토리를 지정하는 기능.(통체로 이해하자.)
+//public이라는 디렉토리를 정적인 파일이 위치하는 디렉토리로 하겠다.
+//정적인 파일(이미지,문서등)을 쓸 수 있다.
+//즉, 한번만들어지면 계속 같은 모습이다.
+//정적인 파일들은 서버를 껏다 킬필요없다.
+
+app.get('/topic/:id',function(req,res){
+  var topics = [
+    'Javascript is....',
+    'Nodejs is....',
+    'Express is....'
+  ];
+  var output = `
+    <a href="/topic?id=0">Javascript</a><br>
+    <a href="/topic?id=1">Nodejs</a><br>
+    <a href="/topic?id=2">Express</a><br><br>
+    ${topics[req.params.id]}
+  `
+  res.send(output);
+})
+//10. 쿼리 스트링
+//localhost:3000/topic?id=''로 가게 된다.
+//지금부터 더욱더 많은 것들이 나오기 때문에 패턴보다는 규칙을 알아야한다(즉 문서를 보자.express명령어 사전)
+//일단, 사용자가 /topic으로 들어왔을때 express는 get의 두번째 인자로 전달된 인자를 express가 호출하고
+//express는 저 function을 호출하고 첫번째 인자의 값으로 req라는 객체를 전달하겠다고 정해져 있는 것이다.
+//만약 2개의 값을 얻어 오려면
+//res.send(req+query.id)+','+(req+query.name); 이다.
+//결과 값은 localhost:3000/topic?id=''&name='' 이다.
+//11.
+//topics와 output은 나중에 데이터 베이스나 파일로 교체해서 사용하면 우리가 사용하는 홈페이지와 유사해 지는걸 볼수있다.
+//12. 시멘틱(의미론적인)URL
+//기본 /topic?id=''로 나왔다면 /topic/1로 하게 해준다.즉 pass방식으로 바꿔준다.
+//기존 get에 '/topic'에 추가로 /:id를 추가하고
+//send의 값에 있는 ${topics[req.query.id]}를 ${topics[req.params.id]}로 변경해주면 된다.
+
+app.get('/topic/:id/:mode',function(req,res){
+  res.send(req.params.id+','+req.params.mode)
+})
+
+app.get('/dynamic',function(req,res){
+  var lis = '';
+  for(var i=0; i<5; i++){
+    lis = lis + '<li>coding</li>';
+  }
+  var time = Date();
+  var output = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <title></title>
+    </head>
+    <body>
+      Hello, Dynamic
+      <ul>
+      ${lis}
+      </ul>
+      ${time}
+    </body>
+  </html>
+  `
+  res.send(output);
+});
+//5.
+//동적으로 파일을 실행할경우, node를 껏다 켜야 한다.
+//변수라는 것을 알려주기 위해서 ${}를 사용한다.
+
+app.get('/route',function(req,res){
+  res.send('Hello Router, <img src="/Heah.JPG">')
+});
+
 app.get('/',function(req, res){
   res.send('Hello home page');
 });

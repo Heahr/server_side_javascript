@@ -1,0 +1,7 @@
+html
+	head
+	body
+		h1 hello jade (탭 눌러서 하면 <Hello>jade</Hello>가 된다.)
+		-for(var i=0; i<5; i++)  ( -는 프로그래밍 적으로 제어하기 위한 코드이기 때문에 jade에서 약속되어있는 문자를 서줘야 한다.)
+			li coding
+		div= time (div태그 생성. )
