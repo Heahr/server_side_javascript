@@ -1,4 +1,5 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
 
 //1.
@@ -38,6 +39,39 @@ app.use(express.static('public'));
 //즉, 한번만들어지면 계속 같은 모습이다.
 //정적인 파일들은 서버를 껏다 킬필요없다.
 
+app.get('/form',function(req,res){
+  res.render('form');
+});
+app.get('/form_receiver',function(req,res){
+  var title = req.query.title;
+  var description = req.query.description;
+  res.send(title+','+description);
+})
+//13.
+//form.jade의 안에있는 form에 값에 method에 값을 주지 않으면 기본 method값에
+//get방식이 들어가게 된다.
+//하지만 method방식에 method='post'로 하고 form_receiver를 생성하면
+//찾을수 없다고 나오지만 데이터 전송은 재대로 되고 있다.
+//post방식이면 url을 이용하여 데이터를 전송하지 않고, 우리가 눈으로 보이지 않는 방식으로
+//데이터를 전송한다.
+
+app.use(bodyParser.urlencoded({extended: false}))
+//14.
+//bodyParser를 연결하는데 이것은 post방식의 데이터가 있다면 req객체가 가지고 있지 않았던 body를
+//이것이 추가해준다.
+//넣어서 추가해준다.
+app.post('/form_receiver',function(req,res){
+  var title = req.body.title;
+  var description = req.body.description;
+  res.send(title+','+description);
+})
+//15.
+//같은 홈페이지를 보여주고싶다면 get방식, 아이디와 비밀번호 입력시 다른사람에게 보안적인 부분에서
+//안전하게 하고싶다면 post방식을 사용해야한다.
+//get방식에서 보내는 데이터가 많으면 url이 길어져 자동적으로 버리기 때문에 post방식이 적당하다.
+//get방식은 쿼리스트링의 장점이고,post는 불필요하게 정보가 노출되지않고 용량이 큰 데이터를 보내는데 장점이있다.
+//get방식은 익스프레스가 기본적 제공하고,post방식은 bodyParser라는 미들웨어를 로드해서 사용해야 한다.
+
 app.get('/topic/:id',function(req,res){
   var topics = [
     'Javascript is....',
@@ -45,9 +79,9 @@ app.get('/topic/:id',function(req,res){
     'Express is....'
   ];
   var output = `
-    <a href="/topic?id=0">Javascript</a><br>
-    <a href="/topic?id=1">Nodejs</a><br>
-    <a href="/topic?id=2">Express</a><br><br>
+    <a href="/topic/0">Javascript</a><br>
+    <a href="/topic/1">Nodejs</a><br>
+    <a href="/topic/2">Express</a><br><br>
     ${topics[req.params.id]}
   `
   res.send(output);
