@@ -98,5 +98,5 @@ app.listen(3000, function(){
 //      })
 //    })
 //  //1.사용자가 topic/+id로 접속을 시도하면
-  //readdir을 통해서 data의 files를 가져옵니다.
-  //readFile을 통해서 data+id에 있는 값을 가져온다.
+//readdir을 통해서 data의 files를 가져옵니다.
+//readFile을 통해서 data+id에 있는 값을 가져온다.
