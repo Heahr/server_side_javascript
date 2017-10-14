@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>email from</title>
+  </head>
+  <body>
+    <form action="/email_post" method="post">
+      email : <input type="text" name="email"><br/>
+      <input type="submit">
+    </from>
+
+    <button class="ajaxsend">ajaxsend</button>
+
+    <div calss="result"></div>
+
+    <script>
+      document.querySelector('.ajaxsend').addEventListener('click',function() {
+        var inputdata = document.forms[0].elements[0].value
+        sendAjax('http://127.0.0.1:3000/ajax_send_email', inputdata);
+      })
+
+      function sendAjax(url, data){
+        var data = {'email' : data};
+        data = JSON.stringify(data);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', url);
+        xhr.setRequestHeader('Content-Type', "application/json")
+        xhr.send(data);
+        xhr.addEventListener('load',function() {
+          var result = xhr.responseText;
+          if(result.result !== "ok") return;
+          document.querySelector(".result").innerHTML = "dsfds";
+        });
+      }
+    </script>
+
+  </body>
+</html>
+<!-- forms 까지는 form을 의미하고 elements는 첫번째 input타입이다. value는 실제 입력값이다. -->
